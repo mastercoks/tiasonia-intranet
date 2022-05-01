@@ -1,0 +1,26 @@
+# Application
+.env
+ecosystem.config.js
+tmp/*
+!tmp/documents
+tmp/documents/*
+!tmp/images
+tmp/images/*
+!tmp/spreadsheets
+tmp/spreadsheets/*
+!tmp/uploads
+tmp/uploads/*
+!*.gitkeep
+
+# Yarn
+node_modules
+yarn-error.log
+
+# Jest
+coverage
+
+# Dist
+dist/
+
+# Docker
+docker

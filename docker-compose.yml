@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.web
+    hostname: web
+    env_file:
+      - .env
+    networks:
+      - frontend
+
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.api
+    hostname: api
+    env_file:
+      - .env
+    ports:
+      - ${API_PORT}:${API_PORT}
+    links:
+      - db
+    depends_on:
+      - db
+    networks:
+      - backend
+      - frontend
+
+  fix-db-permissions:
+    image: bitnami/mariadb:latest
+    user: root
+    command: chown -R 1001:1001 /bitnami/mariadb
+    volumes:
+      - mysql_data:/bitnami/mariadb
+
+  db-gui:
+    image: phpmyadmin/phpmyadmin:latest
+    links:
+      - db
+    ports:
+      - ${MYSQL_GUI_PORT}:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - backend
+      - frontend
+
+  db:
+    image: bitnami/mariadb:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=no
+      - MARIADB_ROOT_PASSWORD=${MYSQL_PASS}
+      - MARIADB_USER=${MYSQL_USER}
+      - MARIADB_PASSWORD=${MYSQL_PASS}
+      - MARIADB_DATABASE=${MYSQL_DB}
+    volumes:
+      - mysql_data:/bitnami/mariadb
+    ports:
+      - ${MYSQL_PORT}:3306
+    depends_on:
+      - fix-db-permissions
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+
+volumes:
+    mysql_data: {}

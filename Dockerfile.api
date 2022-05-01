@@ -1,0 +1,11 @@
+FROM node:14
+
+WORKDIR /usr/src/app
+
+COPY package.json yarn.lock prettier.config.js tsconfig.json .eslintrc.js .eslintignore .env ./
+COPY packages/shared ./packages/shared
+COPY packages/backend/api/package.json ./packages/backend/api/
+
+RUN yarn && yarn cache clean
+
+COPY packages/backend/api/ ./packages/backend/api/

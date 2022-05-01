@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+
+  web:
+    image: 127.0.0.1:5000/intranet-web
+    env_file:
+      - .env
+    networks:
+      - inbound
+    deploy:
+      labels:
+        - 'traefik.enable=true'
+        - 'traefik.http.routers.intranet-web.rule=Host(`intranet.teiu.com.br`)'
+        - 'traefik.http.routers.intranet-web.service=intranet-web'
+        - 'traefik.http.routers.intranet-web.entrypoints=web'
+        - 'traefik.http.services.intranet-web.loadbalancer.server.port=80'
+        - 'traefik.docker.network=inbound'
+      placement:
+        constraints:
+          - node.role==manager
+      restart_policy:
+        condition: on-failure
+
+  api:
+    image: 127.0.0.1:5000/intranet-api
+    command: yarn workspace @intranet/api prod
+    env_file:
+      - .env
+    volumes:
+      - intranet_api_tmp:/usr/src/app/packages/backend/api/tmp
+    networks:
+      - internal
+      - inbound
+    deploy:
+      labels:
+        - 'traefik.enable=true'
+        - 'traefik.http.routers.intranet-api.rule=Host(`api.intranet.teiu.com.br`)'
+        - 'traefik.http.routers.intranet-api.service=intranet-api'
+        - 'traefik.http.routers.intranet-api.entrypoints=web'
+        - 'traefik.http.services.intranet-api.loadbalancer.server.port=${API_PORT}'
+        - 'traefik.docker.network=inbound'
+      placement:
+        constraints:
+          - node.role==manager
+      restart_policy:
+        condition: on-failure
+
+networks:
+  internal:
+    external: false
+  inbound:
+    external: true
+
+volumes:
+    intranet_api_tmp: {}

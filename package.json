@@ -1,0 +1,23 @@
+{
+  "name": "intranet",
+  "private": true,
+  "version": "1.0.0",
+  "license": "EUPL-1.2",
+  "description": "API for internal network",
+  "workspaces": {
+    "packages": [
+      "packages/backend/*",
+      "packages/frontend/*",
+      "packages/shared/*"
+    ]
+  },
+  "devDependencies": {
+    "@intranet/eslint-config": "*",
+    "typescript": "^4.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://gitlab.teiu.com.br/teiu/intranet.git"
+  },
+  "author": "Matheus Coqueiro <ti3@teiu.com.br> (https://github.com/mastercoks/)"
+}
