@@ -8,4 +8,4 @@ docker-compose -f intranet.yml push
 echo "deploying traefik stack in http mode"
 docker stack deploy -c intranet.yml intranet
 echo "Certificates is available at:"
-echo "- http://${DOMAIN}/certificados"
+echo "- http://${DOMAIN}"
