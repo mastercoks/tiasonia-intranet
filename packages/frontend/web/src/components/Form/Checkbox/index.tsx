@@ -18,7 +18,7 @@ interface Props extends React.InputHTMLAttributes<any> {
   options: Option[]
 }
 
-const Checkbox: React.FC<Props> = ({ name, options, ...rest }) => {
+export const Checkbox: React.FC<Props> = ({ name, options, ...rest }) => {
   const refs = useRef<Array<HTMLInputElement>>([])
   const { fieldName, registerField, clearError } = useField(name)
 
@@ -71,4 +71,3 @@ const Checkbox: React.FC<Props> = ({ name, options, ...rest }) => {
     </OptionsContainer>
   )
 }
-export default Checkbox

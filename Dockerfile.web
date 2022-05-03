@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:14-alpine
 
 WORKDIR /usr/src/app
 
@@ -9,3 +9,5 @@ COPY packages/frontend/web/package.json ./packages/frontend/web/
 RUN yarn && yarn cache clean
 
 COPY packages/frontend/web/ ./packages/frontend/web/
+
+RUN yarn workspace @intranet/web build

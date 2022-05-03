@@ -5,7 +5,6 @@ import 'express-async-errors'
 import '@shared/adapters'
 import '@shared/infra/typeorm'
 
-import sentryConfig from '@config/sentry'
 import uploadConfig from '@config/upload'
 import * as Sentry from '@sentry/node'
 import { errors } from 'celebrate'
@@ -17,8 +16,6 @@ import errorHandler from './middlewares/errorHandler'
 import routes from './routes'
 
 const app = express()
-
-Sentry.init({ dsn: sentryConfig.dsn })
 
 app.set('trust proxy', 'loopback')
 app.use(express.json())

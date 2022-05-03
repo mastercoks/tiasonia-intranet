@@ -20,7 +20,7 @@ export const Container = styled.div`
   }
 `
 
-export const CreatableSelectComponent = styled(Creatable)`
+export const CreatableSelectComponent = styled<any>(Creatable)`
   .react-select__control {
     min-height: 48px;
     margin-bottom: 10px;

@@ -1,60 +1,44 @@
 import React from 'react'
-import {
-  Redirect,
-  Route,
-  RouteProps,
-  RouteComponentProps
-} from 'react-router-dom'
+import { Navigate, RouteProps } from 'react-router-dom'
 
-import Loading from '../components/Loading'
-import AuthLayout from '../pages/_layouts/AuthLayout'
-import DefaultLayout from '../pages/_layouts/DefaultLayout'
-import { useAuth } from '../providers/auth'
-import { useLoading } from '../providers/loading'
+import { Loading } from '../components'
+import { AuthLayout, DefaultLayout } from '../layouts'
+import { useAuth, useLoading } from '../providers'
 
 interface Props extends RouteProps {
   isPrivate?: boolean
   isPublic?: boolean
   need?: string[]
+  children: JSX.Element
 }
 
-const RouteWrapper: React.FC<Props> = ({
-  component: Component,
+export const RouteWrapper: React.FC<Props> = ({
+  children,
   need,
   isPrivate = false,
-  isPublic = false,
-  ...rest
+  isPublic = false
 }) => {
   const { user, is } = useAuth()
   const { isLoading } = useLoading()
 
   if (!user && isPrivate && !isPublic) {
-    return <Redirect to="/login" />
+    return <Navigate to="/login" />
   }
 
   if (!!user && !isPrivate && !isPublic) {
-    return <Redirect to="/dashboard" />
+    return <Navigate to="/dashboard" />
   }
 
   const Layout = user && !isPublic ? DefaultLayout : AuthLayout
 
-  if (!Component || !is(need)) {
-    return <Redirect to="/dashboard" />
+  if (!children || !is(need)) {
+    return <Navigate to="/dashboard" />
   }
 
   return (
-    <Route
-      {...rest}
-      render={(props: RouteComponentProps<any>) => (
-        <>
-          <Layout>
-            <Component {...props} />
-            {isLoading && <Loading />}
-          </Layout>
-        </>
-      )}
-    />
+    <Layout>
+      {children}
+      {isLoading && <Loading />}
+    </Layout>
   )
 }
-
-export default RouteWrapper

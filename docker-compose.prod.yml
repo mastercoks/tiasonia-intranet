@@ -3,11 +3,11 @@ version: '3'
 services:
 
   web:
-    command: yarn workspace @intranet/web prod
     image: 127.0.0.1:5000/intranet-web
+    command: yarn workspace @intranet/web prod
     restart: always
     ports:
-      - '80:80'
+      - '80:8080'
 
   api:
     image: 127.0.0.1:5000/intranet-api

@@ -8,7 +8,11 @@ interface LoadingContextData {
 
 const LoadingContext = createContext({} as LoadingContextData)
 
-const LoadingProvider: React.FC = ({ children }) => {
+interface Props {
+  children?: React.ReactNode
+}
+
+export const LoadingProvider: React.FC<Props> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const loadStart = useCallback(() => setIsLoading(true), [])
@@ -21,7 +25,7 @@ const LoadingProvider: React.FC = ({ children }) => {
   )
 }
 
-const useLoading = (): LoadingContextData => {
+export const useLoading = (): LoadingContextData => {
   const context = useContext(LoadingContext)
 
   if (!context) {
@@ -30,5 +34,3 @@ const useLoading = (): LoadingContextData => {
 
   return context
 }
-
-export { LoadingProvider, useLoading }

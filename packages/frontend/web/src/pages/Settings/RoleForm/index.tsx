@@ -4,13 +4,10 @@ import { BiSave, BiX } from 'react-icons/bi'
 import SimpleBar from 'simplebar-react'
 import * as Yup from 'yup'
 
-import Button from '../../../components/Button'
-import { AsyncSelect, Form, Input } from '../../../components/Form'
-import { useLoading } from '../../../providers/loading'
-import { useToast } from '../../../providers/toast'
-import api from '../../../services/axios'
-import capitalize from '../../../utils/capitalize'
-import getValidationErrors from '../../../utils/getValidationErrors'
+import { Button, AsyncSelect, Form, Input } from '../../../components'
+import { useLoading, useToast } from '../../../providers'
+import { api } from '../../../services'
+import { capitalize, getValidationErrors } from '../../../utils'
 import { Row } from './styles'
 
 import 'simplebar/dist/simplebar.min.css'
@@ -33,7 +30,7 @@ interface Props {
   onClose: () => void
 }
 
-const RoleForm: React.FC<Props> = ({ id, onClose, formRef }) => {
+export const RoleForm: React.FC<Props> = ({ id, onClose, formRef }) => {
   const { addToast } = useToast()
   const { isLoading, loadStart, loadFinish } = useLoading()
 
@@ -57,7 +54,7 @@ const RoleForm: React.FC<Props> = ({ id, onClose, formRef }) => {
         addToast({
           type: 'error',
           title: `Erro ${id ? 'na alteração' : 'no cadastro'}`,
-          description: err
+          description: String(err)
         })
       }
     }
@@ -107,14 +104,14 @@ const RoleForm: React.FC<Props> = ({ id, onClose, formRef }) => {
         addToast({
           type: 'error',
           title: `Erro ${id ? 'na alteração' : 'no cadastro'}`,
-          description: err
+          description: String(err)
         })
       }
     },
     [id, addToast, formRef, onClose, loadStart, loadFinish]
   )
 
-  const loadPermissions = useCallback(async search => {
+  const loadPermissions = useCallback(async (search: string) => {
     const response = await api.get<Permission[]>('/permissions', {
       params: { name: search, per_page: 999 }
     })
@@ -164,5 +161,3 @@ const RoleForm: React.FC<Props> = ({ id, onClose, formRef }) => {
     </>
   )
 }
-
-export default RoleForm

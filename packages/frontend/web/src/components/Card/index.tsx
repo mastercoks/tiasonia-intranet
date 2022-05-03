@@ -1,7 +1,9 @@
 import { Container } from './styles'
 
-const Card: React.FC = ({ children }) => {
-  return <Container>{children}</Container>
+interface Props {
+  children?: React.ReactNode
 }
 
-export default Card
+export const Card: React.FC<Props> = ({ children }) => {
+  return <Container>{children}</Container>
+}

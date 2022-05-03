@@ -24,7 +24,7 @@ interface MysqlConfig {
 
 export default {
   host: MYSQL_HOST || 'localhost',
-  port: MYSQL_PORT || 3306,
+  port: Number(MYSQL_PORT) || 3306,
   username: MYSQL_USER,
   password: MYSQL_PASS,
   database: MYSQL_DB,
@@ -37,5 +37,5 @@ export default {
       ? 'src/shared/infra/typeorm/migrations/*.ts'
       : 'dist/shared/infra/typeorm/migrations/*.js',
   synchronize: Boolean(Number(TYPEORM_SYNC)),
-  logging: Boolean(Number(TYPEORM_LOGGING)) || false
+  logging: TYPEORM_LOGGING || false
 } as MysqlConfig

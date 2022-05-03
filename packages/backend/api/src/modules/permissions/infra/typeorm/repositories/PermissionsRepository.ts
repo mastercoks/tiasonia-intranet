@@ -3,7 +3,7 @@ import IListPermissionDTO, {
   IResponse
 } from '@modules/permissions/dtos/IListPermissionDTO'
 import IPermissionsRepository from '@modules/permissions/repositories/IPermissionsRepository'
-import { getRepository, Repository } from 'typeorm'
+import { Equal, getRepository, Repository } from 'typeorm'
 
 import Permission from '../entities/Permission'
 
@@ -48,7 +48,9 @@ class PermissionsRepository implements IPermissionsRepository {
   }
 
   public async findByName(name: string): Promise<Permission> {
-    return await this.ormRepository.findOne(name)
+    return await this.ormRepository.findOne({
+      where: { name: Equal(name) }
+    })
   }
 
   public async create(data: ICreatePermissionDTO): Promise<Permission> {

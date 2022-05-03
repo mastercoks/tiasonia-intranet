@@ -27,7 +27,7 @@ class AuthenticateUserService {
   ) {}
 
   public async execute({ login, password }: IRequest): Promise<IResponse> {
-    const user = await this.usersRepository.findByCpf(login)
+    const user = await this.usersRepository.findByLogin(login)
 
     if (!user) {
       throw new AppError(

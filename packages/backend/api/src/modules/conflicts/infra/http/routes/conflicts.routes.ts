@@ -22,4 +22,10 @@ conflictsRouter.get(
   conflictsController.list
 )
 
+conflictsRouter.get(
+  '/stop',
+  is('STOP_SYNC_CONFLICT'),
+  conflictsController.update
+)
+
 export default conflictsRouter

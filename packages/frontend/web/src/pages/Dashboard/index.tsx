@@ -1,10 +1,10 @@
 import React from 'react'
 
-import { useAuth } from '../../providers/auth'
-import capitalize from '../../utils/capitalize'
+import { useAuth } from '../../providers'
+import { capitalize } from '../../utils'
 import { Container } from './styles'
 
-const Dashboard: React.FC = () => {
+export const Dashboard: React.FC = () => {
   const { user } = useAuth()
   return (
     <Container>
@@ -13,5 +13,3 @@ const Dashboard: React.FC = () => {
     </Container>
   )
 }
-
-export default Dashboard

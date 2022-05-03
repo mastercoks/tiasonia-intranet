@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { FiAlertCircle, FiCheckCircle, FiInfo, FiXCircle } from 'react-icons/fi'
 
-import { ToastMessage, useToast } from '../../../providers/toast'
+import { ToastMessage, useToast } from '../../../providers'
 import { Container } from './styles'
 
 interface ToastProps {
@@ -15,7 +15,7 @@ const icons = {
   success: <FiCheckCircle size={24} />
 }
 
-const Toast: React.FC<ToastProps> = ({ message, style }) => {
+export const Toast: React.FC<ToastProps> = ({ message, style }) => {
   const { removeToast } = useToast()
 
   useEffect(() => {
@@ -43,5 +43,3 @@ const Toast: React.FC<ToastProps> = ({ message, style }) => {
     </Container>
   )
 }
-
-export default Toast

@@ -3,41 +3,38 @@ import { Form } from '@unform/web'
 import React, { useCallback, useRef, useState } from 'react'
 import { BiEditAlt, BiFilterAlt, BiPlus } from 'react-icons/bi'
 
-import Box from '../../../components/Box'
-import Button from '../../../components/Button'
-import Filters, { FilterHandles } from '../../../components/Filters'
-import { Input, Select } from '../../../components/Form'
-import Header from '../../../components/Header'
-import Modal from '../../../components/Modal'
-import PaginatedTable from '../../../components/PaginatedTable'
-import usePaginatedRequest from '../../../services/usePaginatedRequest'
-import theme from '../../../styles/theme'
-import capitalize from '../../../utils/capitalize'
-import { formatCPF } from '../../../utils/formatters'
-import getTypeColor from '../../../utils/getTypeColor'
-import UserForm from '../UserForm'
+import {
+  Box,
+  Button,
+  Filters,
+  FilterHandles,
+  Input,
+  Header,
+  Modal,
+  PaginatedTable
+} from '../../../components'
+import { usePaginatedRequest } from '../../../services'
+import { theme } from '../../../styles'
+import { capitalize, getTypeColor } from '../../../utils'
+import { UserForm } from '../UserForm'
 import { Container, ScrollArea, Buttons } from './styles'
 
 interface User {
   id: string
   name: string
-  cpf: string
-  email: string
-  type: string
+  login: string
   active: boolean
-  company: string
-  cost_center: CostCenter
 }
 
-interface CostCenter {
-  id: string
-  name: string
+interface IFilters {
+  name?: string
+  login?: string
 }
 
-const UserList: React.FC = () => {
+export const UserList: React.FC = () => {
   const [openModal, setOpenModal] = useState(false)
-  const [filters, setFilters] = useState(null)
-  const [userId, setUserId] = useState(null)
+  const [filters, setFilters] = useState<IFilters>({})
+  const [userId, setUserId] = useState('')
   const filterRef = useRef<FilterHandles>(null)
   const formRef = useRef<FormHandles>(null)
 
@@ -50,10 +47,10 @@ const UserList: React.FC = () => {
     formRef.current?.setErrors({})
     formRef.current?.reset()
     setOpenModal(false)
-    request.revalidate()
+    request.mutate()
   }, [request])
 
-  const handleOpenModal = useCallback((id = undefined) => {
+  const handleOpenModal = useCallback((id = '') => {
     setUserId(id)
     setOpenModal(true)
   }, [])
@@ -67,12 +64,10 @@ const UserList: React.FC = () => {
     formRef.current?.reset()
   }, [])
 
-  const handleFilter = useCallback(data => {
+  const handleFilter = useCallback((data: IFilters) => {
     filterRef.current?.toggleModal(false)
     !data.name && delete data.name
-    !data.cpf && delete data.cpf
-    if (data.cpf) data.cpf = data.cpf.replace(/[^\d]+/g, '')
-    !data.type && delete data.type
+    !data.login && delete data.login
     setFilters(data)
   }, [])
 
@@ -96,25 +91,27 @@ const UserList: React.FC = () => {
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Cpf</th>
-              <th>Tipo</th>
+              <th>Login</th>
+              <th>Situação</th>
               <th style={{ width: 32 }} />
             </tr>
           </thead>
           <tbody>
-            {request.data?.map(user => (
+            {request.data?.map((user: User) => (
               <tr key={user.id}>
                 <td className={!user.active ? 'inactive' : ''}>
                   {capitalize(user.name)}
                 </td>
-                <td>{formatCPF(user.cpf)}</td>
+                <td>{user.login}</td>
                 <td
                   style={{
                     color: theme.colors.light,
-                    backgroundColor: getTypeColor(user.type)
+                    backgroundColor: getTypeColor(
+                      user.active ? 'ativo' : 'inativo'
+                    )
                   }}
                 >
-                  {capitalize(user.type)}
+                  {user.active ? 'Ativo' : 'Inativo'}
                 </td>
                 <td className="button">
                   <Button
@@ -135,23 +132,7 @@ const UserList: React.FC = () => {
         <Form ref={formRef} onSubmit={handleFilter}>
           <ScrollArea>
             <Input label="Nome" name="name" />
-            <Input label="Cpf" name="cpf" mask="999.999.999-99" />
-            <Select
-              label="Tipo"
-              name="type"
-              placeholder="Selecione o tipo"
-              options={[
-                { value: 'visitante', label: 'Visitante' },
-                {
-                  value: 'funcionario',
-                  label: 'Funcionario'
-                },
-                { value: 'terceirizado', label: 'Terceirizado' },
-                { value: 'diretor', label: 'Diretor' },
-                { value: 'motorista', label: 'Motorista' }
-              ]}
-              isSearchable={false}
-            />
+            <Input label="Login" name="login" />
           </ScrollArea>
           <Buttons>
             <Button size="big" type="submit" color="secondary">
@@ -172,5 +153,3 @@ const UserList: React.FC = () => {
     </Container>
   )
 }
-
-export default UserList

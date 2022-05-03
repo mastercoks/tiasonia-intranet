@@ -1,7 +1,9 @@
 import { shade } from 'polished'
 import { createGlobalStyle } from 'styled-components'
 
-export default createGlobalStyle`
+import { theme } from './theme'
+
+export const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
     padding: 0;
@@ -10,8 +12,8 @@ export default createGlobalStyle`
     text-decoration: auto;
   }
   body {
-    background-color: ${props => props.theme.colors.light};
-    color: ${props => props.theme.colors.lightContrast};
+    background-color: ${theme.colors.light};
+    color: ${theme.colors.lightContrast};
     -webkit-font-smoothing: antialised;
   }
   body, input, textarea {
@@ -75,7 +77,6 @@ export default createGlobalStyle`
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    box-shadow: 0 0 0 30px ${props =>
-      shade(0.1, props.theme.colors.light)}  inset !important;
+    box-shadow: 0 0 0 30px ${shade(0.1, theme.colors.light)}  inset !important;
   }
 `

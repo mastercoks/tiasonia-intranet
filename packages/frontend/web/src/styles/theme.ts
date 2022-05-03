@@ -1,8 +1,8 @@
-const theme = {
+export const theme = {
   colors: {
-    primary: '#0091d4',
+    primary: '#03257F',
     primaryContrast: '#f7f7ff',
-    secondary: '#D96C00',
+    secondary: '#d3b61a',
     secondaryContrast: '#f7f7ff',
     danger: '#FF3B3B',
     dangerContrast: '#fafafb',
@@ -32,5 +32,3 @@ const theme = {
     mdDown: '768px'
   }
 }
-
-export default theme

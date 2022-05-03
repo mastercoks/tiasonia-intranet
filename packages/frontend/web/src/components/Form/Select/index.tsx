@@ -1,9 +1,14 @@
 import { useField } from '@unform/core'
 import React, { useRef, useEffect } from 'react'
 import { BiErrorCircle } from 'react-icons/bi'
-import { OptionTypeBase, Props as SelectProps } from 'react-select'
+import { Props as SelectProps } from 'react-select'
 
 import { Container, SelectComponent, ErrorArea } from './styles'
+
+type OptionTypeBase = {
+  label: string
+  value: string | boolean
+}
 
 interface Props extends SelectProps<OptionTypeBase> {
   name: string
@@ -11,7 +16,7 @@ interface Props extends SelectProps<OptionTypeBase> {
   note?: string
 }
 
-const Select: React.FC<Props> = ({ name, label, note, ...rest }) => {
+export const Select: React.FC<Props> = ({ name, label, note, ...rest }) => {
   const selectRef = useRef(null)
   const { fieldName, defaultValue, registerField, error } = useField(name)
 
@@ -23,22 +28,25 @@ const Select: React.FC<Props> = ({ name, label, note, ...rest }) => {
         const selected = ref.props.options.filter(
           (option: any) => option.value === value
         )
-        ref.select.setValue(selected[0] || null)
+        ref.setValue(selected[0] || null)
       },
-      getValue: (ref: any) => {
+      getValue: ref => {
         if (rest.isMulti) {
-          if (!ref.state.value) {
+          if (!ref.state.selectValue) {
             return []
           }
-          return ref.state.value.map((option: OptionTypeBase) => option.value)
+
+          return ref.state.selectValue.map(
+            (option: OptionTypeBase) => option.value
+          )
         }
-        if (!ref.state.value) {
+        if (!ref.state.selectValue) {
           return ''
         }
-        return ref.state.value.value
+        return ref.state.selectValue[0].value
       },
       clearValue: ref => {
-        ref.select.setValue(ref.props.defaultValue)
+        ref.clearValue()
       }
     })
   }, [fieldName, registerField, rest.isMulti])
@@ -73,5 +81,3 @@ const Select: React.FC<Props> = ({ name, label, note, ...rest }) => {
     </Container>
   )
 }
-
-export default Select

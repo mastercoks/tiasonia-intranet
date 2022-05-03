@@ -4,7 +4,7 @@ interface Errors {
   [key: string]: string
 }
 
-const getValidationErrors = (err: ValidationError): Errors => {
+export const getValidationErrors = (err: ValidationError): Errors => {
   const validationErrors: Errors = {}
 
   err.inner.forEach(error => {
@@ -14,5 +14,3 @@ const getValidationErrors = (err: ValidationError): Errors => {
 
   return validationErrors
 }
-
-export default getValidationErrors

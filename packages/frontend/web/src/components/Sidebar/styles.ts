@@ -34,6 +34,10 @@ export const LogoArea = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  img {
+    width: 120px;
+    min-width: 120;
+  }
 `
 
 export const Nav = styled(SimpleBar)`

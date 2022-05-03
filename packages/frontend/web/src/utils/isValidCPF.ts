@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-function isValidCPF(value: any): boolean {
+export function isValidCPF(value: any): boolean {
   if (typeof value !== 'string') return false
   value = value.replace(/[\s.-]*/gim, '')
   if (
@@ -35,5 +35,3 @@ function isValidCPF(value: any): boolean {
 
   return rest === parseInt(value.substring(10, 11))
 }
-
-export default isValidCPF

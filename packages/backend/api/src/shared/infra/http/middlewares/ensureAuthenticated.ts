@@ -46,7 +46,7 @@ function is(permission: string): any {
   ) => {
     const user = await decoder(req.headers.authorization)
     if (typeof user === 'string')
-      throw new AppError('Invalid JWT token', 401, 'token.unauthorized')
+      throw new AppError('Invalid JWT token', 401, 'token_unauthorized')
     if (user) req.headers.user_id = user.id
 
     const permissions = [
@@ -62,7 +62,7 @@ function is(permission: string): any {
     if (existsRoles) {
       return next()
     }
-    throw new AppError('User not authorized', 401, 'token.unauthorized')
+    throw new AppError('User not authorized', 401, 'token_unauthorized')
   }
 
   return roleAuthorized
@@ -77,11 +77,11 @@ function verifyRecipient(): any {
     const recipientId = await decoder(req.headers.authorization)
 
     if (typeof recipientId !== 'string')
-      throw new AppError('Invalid JWT token', 401, 'token.unauthorized')
+      throw new AppError('Invalid JWT token', 401, 'token_unauthorized')
 
     if (recipientId) return next()
 
-    throw new AppError('User not authorized', 401, 'token.unauthorized')
+    throw new AppError('User not authorized', 401, 'token_unauthorized')
   }
 
   return roleAuthorized

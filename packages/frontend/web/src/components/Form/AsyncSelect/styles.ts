@@ -20,7 +20,7 @@ export const Container = styled.div`
   }
 `
 
-export const Select = styled(AsyncSelect)`
+export const Select = styled<any>(AsyncSelect)`
   .react-select__control {
     min-height: 48px;
     margin-bottom: 10px;
@@ -37,7 +37,7 @@ export const Select = styled(AsyncSelect)`
       border-color: ${props => shade(0.1, props.theme.colors.primary)};
     }
     ${props =>
-      props.isErrored &&
+      !!props?.isErrored &&
       css`
         border-color: ${props => props.theme.colors.danger};
       `}

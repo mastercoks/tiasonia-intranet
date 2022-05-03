@@ -1,23 +1,12 @@
 import { decode } from 'jsonwebtoken'
 import React, { createContext, useCallback, useState, useContext } from 'react'
 
-import api from '../services/axios'
-
-interface IContact {
-  id: string
-  name: string
-  email: string
-  confirm: string
-}
+import { api } from '../services'
 
 interface IUser {
   id: string
   name: string
-  email: string
-  type: string
-  cpf: string
-  company: string
-  contact?: IContact
+  login: string
 }
 
 interface AuthState {
@@ -40,9 +29,13 @@ interface AuthContextData {
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 
-const AuthProvider: React.FC = ({ children }) => {
+interface Props {
+  children?: React.ReactNode
+}
+
+export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [data, setData] = useState<AuthState>(() => {
-    const token = localStorage.getItem('@IntranetTeiu:token')
+    const token = localStorage.getItem('@Intranet:token')
     const payload: any = decode(token || '', { json: false })
 
     if (token) {
@@ -57,13 +50,13 @@ const AuthProvider: React.FC = ({ children }) => {
   })
 
   const is = useCallback(
-    need =>
+    (need: string[]) =>
       !need ||
       data?.permissions.some((permission: any) => need.includes(permission)),
     [data]
   )
 
-  const signIn = useCallback(async ({ login, password }) => {
+  const signIn = useCallback(async ({ login, password }: SignInCredentials) => {
     const response = await api.post('sessions', {
       login,
       password
@@ -71,14 +64,14 @@ const AuthProvider: React.FC = ({ children }) => {
 
     const { token } = response.data
 
-    localStorage.setItem('@IntranetTeiu:token', token)
+    localStorage.setItem('@Intranet:token', token)
     const payload: any = decode(token || '')
 
     setData({ token, user: payload?.user, permissions: payload?.permissions })
   }, [])
 
   const signOut = useCallback(() => {
-    localStorage.removeItem('@IntranetTeiu:token')
+    localStorage.removeItem('@Intranet:token')
 
     setData({} as AuthState)
   }, [])
@@ -97,7 +90,7 @@ const AuthProvider: React.FC = ({ children }) => {
   )
 }
 
-function useAuth(): AuthContextData {
+export function useAuth(): AuthContextData {
   const context = useContext(AuthContext)
 
   if (!context) {
@@ -106,5 +99,3 @@ function useAuth(): AuthContextData {
 
   return context
 }
-
-export { AuthProvider, useAuth }

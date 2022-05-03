@@ -1,23 +1,30 @@
 import { useField } from '@unform/core'
 import React, { useRef, useEffect } from 'react'
 import { BiErrorCircle } from 'react-icons/bi'
-import { OptionTypeBase, GroupTypeBase } from 'react-select'
-import { Props as CreatableProps } from 'react-select/async-creatable'
+import { GroupBase } from 'react-select'
+import { AsyncProps } from 'react-select/async'
 
 import { Container, CreatableSelectComponent, ErrorArea } from './styles'
 
+type OptionTypeBase = {
+  label: string
+  value: string
+}
+
 interface Props
-  extends CreatableProps<
-    OptionTypeBase,
-    boolean,
-    GroupTypeBase<OptionTypeBase>
-  > {
+  extends AsyncProps<OptionTypeBase, boolean, GroupBase<OptionTypeBase>> {
   name: string
   label?: string
   note?: string
+  isMulti?: boolean
 }
 
-const CreatableSelect: React.FC<Props> = ({ name, label, note, ...rest }) => {
+export const CreatableSelect: React.FC<Props> = ({
+  name,
+  label,
+  note,
+  ...rest
+}) => {
   const selectRef = useRef(null)
   const { fieldName, defaultValue, registerField, error } = useField(name)
 
@@ -26,26 +33,26 @@ const CreatableSelect: React.FC<Props> = ({ name, label, note, ...rest }) => {
       name: fieldName,
       ref: selectRef.current,
       setValue: (ref, value) => {
-        ref.select.select.select.setValue(value)
+        ref.setValue(value)
       },
-      getValue: (ref: any) => {
+      getValue: ref => {
         if (rest.isMulti) {
-          if (!ref.select.state.value) {
+          if (!ref.state.selectValue) {
             return []
           }
 
-          return ref.select.state.value.map(
+          return ref.state.selectValue.map(
             (option: OptionTypeBase) => option.value
           )
         }
-        if (!ref.select.state.value) {
+        if (!ref.state.selectValue) {
           return ''
         }
 
-        return ref.select.state.value.value
+        return ref.state.selectValue[0].value
       },
       clearValue: ref => {
-        ref.select.select.select.clearValue()
+        ref.clearValue()
       }
     })
   }, [fieldName, registerField, rest.isMulti])
@@ -80,5 +87,3 @@ const CreatableSelect: React.FC<Props> = ({ name, label, note, ...rest }) => {
     </Container>
   )
 }
-
-export default CreatableSelect

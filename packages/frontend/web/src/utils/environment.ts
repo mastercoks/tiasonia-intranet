@@ -1,1 +1,3 @@
-export const { REACT_APP_API_URL } = process.env || 'http://localhost:3333'
+export const API_URL = process.env.PUBLIC_URL
+  ? `${process.env.PUBLIC_URL}/gateway`
+  : 'http://localhost:3333'

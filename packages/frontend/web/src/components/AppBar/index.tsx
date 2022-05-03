@@ -2,8 +2,8 @@ import React, { RefObject, useCallback, useRef } from 'react'
 import { BiMenu, BiUser, BiLogOutCircle } from 'react-icons/bi'
 
 import { useAuth } from '../../providers/auth'
-import Button from '../Button'
-import Dropdown, { DropdownHandles } from '../Dropdown'
+import { Button } from '../Button'
+import { Dropdown, DropdownHandles } from '../Dropdown'
 import { SidebarHandles } from '../Sidebar'
 import { Container } from './styles'
 
@@ -11,7 +11,7 @@ interface AppBarProps {
   sidebarRef: RefObject<SidebarHandles>
 }
 
-const AppBar: React.FC<AppBarProps> = ({ sidebarRef }) => {
+export const AppBar: React.FC<AppBarProps> = ({ sidebarRef }) => {
   const { signOut } = useAuth()
   const dropdownRef = useRef<DropdownHandles>(null)
 
@@ -27,7 +27,7 @@ const AppBar: React.FC<AppBarProps> = ({ sidebarRef }) => {
       >
         <BiMenu size={24} />
       </a>
-      <span>Intranet</span>
+      <span>Intranet - Tia Sônia</span>
       <nav>
         <a onClick={handleDropdown} style={{ position: 'relative' }}>
           <BiUser size={24} />
@@ -42,5 +42,3 @@ const AppBar: React.FC<AppBarProps> = ({ sidebarRef }) => {
     </Container>
   )
 }
-
-export default AppBar

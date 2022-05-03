@@ -4,6 +4,7 @@ import { createConnection } from 'typeorm'
 
 const connect = async () => {
   try {
+    await sleep(4000)
     await createConnection({
       name: 'default',
       type: 'mysql',
@@ -21,11 +22,14 @@ const connect = async () => {
       logging: mysqlConfig.logging
     })
     console.log('Connected!')
-  } catch (err) {
-    console.error(
-      'Error when trying to connect to the database, trying again in 1s'
-    )
-    await sleep(1000)
+  } catch (err: any) {
+    console.error('error', 'Erro na sincronização dos conflitos', {
+      action: '@shared/infra/typeorm/index',
+      err,
+      message: err.message,
+      stack: err.stack?.split('\n')
+    })
+    await sleep(2000)
     connect()
   }
 }

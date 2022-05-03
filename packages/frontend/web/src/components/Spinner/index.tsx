@@ -7,7 +7,7 @@ interface Props {
   size?: number
 }
 
-const Spinner: React.FC<Props> = ({ color, size = 25 }) => {
+export const Spinner: React.FC<Props> = ({ color, size = 25 }) => {
   return (
     <SpinnerContainer size={size}>
       <Bounce1 color={color} />
@@ -15,5 +15,3 @@ const Spinner: React.FC<Props> = ({ color, size = 25 }) => {
     </SpinnerContainer>
   )
 }
-
-export default Spinner

@@ -1,7 +1,7 @@
 import { shade, tint } from 'polished'
 import styled from 'styled-components'
 
-export default styled.div`
+export const Box = styled.div`
   padding: 25px 25px 30px;
   border-radius: 20px;
   background-color: ${props => tint(1, props.theme.colors.light)};

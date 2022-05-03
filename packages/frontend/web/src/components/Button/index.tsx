@@ -1,10 +1,14 @@
 import React from 'react'
 
-import theme from '../../styles/theme'
-import Spinner from '../Spinner'
+import { theme } from '../../styles'
+import { Spinner } from '../Spinner'
 import { ButtonProps, Container } from './styles'
 
-const Button: React.FC<ButtonProps> = ({ loading, children, ...rest }) => {
+export const Button: React.FC<ButtonProps> = ({
+  loading,
+  children,
+  ...rest
+}) => {
   return (
     <Container {...rest} loading={loading}>
       {loading ? (
@@ -18,5 +22,3 @@ const Button: React.FC<ButtonProps> = ({ loading, children, ...rest }) => {
     </Container>
   )
 }
-
-export default Button

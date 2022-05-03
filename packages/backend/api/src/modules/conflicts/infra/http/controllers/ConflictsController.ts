@@ -1,5 +1,6 @@
 import CheckConflictService from '@modules/conflicts/services/CheckConflictService'
 import ListConflictService from '@modules/conflicts/services/ListConflictService'
+import StopConflictService from '@modules/conflicts/services/StopConflictService'
 import { classToClass } from 'class-transformer'
 import { Request, Response } from 'express'
 import { container } from 'tsyringe'
@@ -26,6 +27,12 @@ class ConflictsController {
     const checkConflictService = container.resolve(CheckConflictService)
     checkConflictService.execute()
     return res.status(204).send()
+  }
+
+  public async update(req: Request, res: Response): Promise<Response> {
+    const stopConflictService = container.resolve(StopConflictService)
+    const execution = await stopConflictService.execute()
+    return res.status(200).json(classToClass(execution))
   }
 }
 

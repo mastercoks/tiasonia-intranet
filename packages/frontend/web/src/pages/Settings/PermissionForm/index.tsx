@@ -4,13 +4,10 @@ import { BiSave, BiX } from 'react-icons/bi'
 import SimpleBar from 'simplebar-react'
 import * as Yup from 'yup'
 
-import Button from '../../../components/Button'
-import { Form, Input } from '../../../components/Form'
-import { useLoading } from '../../../providers/loading'
-import { useToast } from '../../../providers/toast'
-import api from '../../../services/axios'
-import capitalize from '../../../utils/capitalize'
-import getValidationErrors from '../../../utils/getValidationErrors'
+import { Button, Form, Input } from '../../../components'
+import { useLoading, useToast } from '../../../providers'
+import { api } from '../../../services'
+import { capitalize, getValidationErrors } from '../../../utils'
 import { Row } from './styles'
 
 import 'simplebar/dist/simplebar.min.css'
@@ -27,7 +24,7 @@ interface Props {
   onClose: () => void
 }
 
-const PermissionForm: React.FC<Props> = ({ id, onClose, formRef }) => {
+export const PermissionForm: React.FC<Props> = ({ id, onClose, formRef }) => {
   const { addToast } = useToast()
   const { isLoading, loadStart, loadFinish } = useLoading()
 
@@ -45,7 +42,7 @@ const PermissionForm: React.FC<Props> = ({ id, onClose, formRef }) => {
         addToast({
           type: 'error',
           title: `Erro ${id ? 'na alteração' : 'no cadastro'}`,
-          description: err
+          description: String(err)
         })
       }
     }
@@ -93,7 +90,7 @@ const PermissionForm: React.FC<Props> = ({ id, onClose, formRef }) => {
         addToast({
           type: 'error',
           title: `Erro ${id ? 'na alteração' : 'no cadastro'}`,
-          description: err
+          description: String(err)
         })
       }
     },
@@ -130,5 +127,3 @@ const PermissionForm: React.FC<Props> = ({ id, onClose, formRef }) => {
     </>
   )
 }
-
-export default PermissionForm

@@ -1,7 +1,7 @@
 import { AxiosRequestConfig } from 'axios'
 import { useState, useCallback, useMemo } from 'react'
 
-import useRequest, { Return } from './useRequest'
+import { useRequest, Return } from './useRequest'
 
 export interface OptionType {
   label: string
@@ -20,7 +20,7 @@ export interface PaginatedRequest<Data, Error> extends Return<Data, Error> {
   hasNextPage: boolean
 }
 
-export default function usePaginatedRequest<Data = unknown, Error = unknown>(
+export function usePaginatedRequest<Data = unknown, Error = unknown>(
   request: AxiosRequestConfig
 ): PaginatedRequest<Data, Error> {
   const [page, setPage] = useState(1)
@@ -32,10 +32,10 @@ export default function usePaginatedRequest<Data = unknown, Error = unknown>(
   })
 
   const hasPreviousPage = useMemo(() => page > 1, [page])
-  const hasNextPage = useMemo(() => page < response?.headers['x-total-page'], [
-    page,
-    response
-  ])
+  const hasNextPage = useMemo(
+    () => page < Number(response?.headers['x-total-page']),
+    [page, response]
+  )
 
   const resetPage = useCallback(() => {
     setPage(1)
@@ -52,7 +52,7 @@ export default function usePaginatedRequest<Data = unknown, Error = unknown>(
   const goToPage = useCallback(
     (newPage: number) => {
       setPage(current =>
-        newPage <= response?.headers['x-total-page'] && newPage > 0
+        newPage <= Number(response?.headers['x-total-page']) && newPage > 0
           ? newPage
           : current
       )

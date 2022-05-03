@@ -10,15 +10,12 @@ import {
   BiChevronDown,
   BiChevronUp,
   BiCog,
-  BiEnvelope,
   BiHomeAlt,
-  BiIdCard,
-  BiServer,
-  BiShieldQuarter
+  BiServer
 } from 'react-icons/bi'
 import { NavLink } from 'react-router-dom'
 
-import logo from '../../assets/logo.svg'
+import logo from '../../assets/logo.png'
 import { useAuth } from '../../providers/auth'
 import { Container, Nav, LogoArea, ItemContainer, SubItems } from './styles'
 
@@ -30,10 +27,7 @@ interface Props {
   children?: ReactNode
 }
 
-const Sidebar: React.ForwardRefRenderFunction<SidebarHandles, Props> = (
-  props,
-  ref
-) => {
+export const Sidebar = forwardRef<SidebarHandles, Props>((props, ref) => {
   const { is } = useAuth()
 
   const [isActive, setIsActive] = useState(false)
@@ -45,80 +39,11 @@ const Sidebar: React.ForwardRefRenderFunction<SidebarHandles, Props> = (
       page: '/dashboard'
     },
     {
-      name: 'Assinaturas',
-      icon: <BiIdCard size={24} />,
-      active: false,
-      page: '/signatures',
-      need: ['SIGNATURES']
-    },
-    {
-      name: 'Envelopes',
-      icon: <BiEnvelope size={24} />,
-      active: false,
-      page: '/envelopes',
-      need: ['ENVELOPES'],
-      items: [
-        {
-          name: 'Contatos',
-          subpage: '/contacts',
-          need: ['LIST_CONTACT']
-        }
-      ]
-    },
-    // {
-    //   name: 'Mural Interativo',
-    //   icon: <BiTable size={24} />,
-    //   active: false,
-    //   page: '/information-wall'
-    // },
-    {
-      name: 'Controle Acesso',
-      icon: <BiShieldQuarter size={24} />,
-      active: false,
-      page: '/access-control',
-      need: ['ACCESS_CONTROL'],
-      items: [
-        {
-          name: 'Colaboradores',
-          subpage: '/collaborators',
-          need: ['LIST_USER']
-        },
-        {
-          name: 'Registros',
-          subpage: '/records',
-          need: ['LIST_RECORD']
-        },
-        {
-          name: 'Relatórios',
-          subpage: '/reports'
-        }
-      ]
-    },
-    // {
-    //   name: 'Assinaturas',
-    //   icon: <BiIdCard size={24} />,
-    //   active: false,
-    //   page: '/email-signature'
-    // },
-    // {
-    //   name: 'Prorrogar contas',
-    //   icon: <BiHistory size={24} />,
-    //   active: false,
-    //   page: '/reschedule-bills'
-    // },
-    {
-      name: 'Webservices',
+      name: 'Conflitos de Cadastro',
       icon: <BiServer size={24} />,
       active: false,
-      page: '/webservices',
-      need: ['WEBSERVICES'],
-      items: [
-        {
-          name: 'Conflitos de Cadastro',
-          subpage: '/conflicts',
-          need: ['LIST_CONFLICT']
-        }
-      ]
+      page: '/conflicts',
+      need: ['CONFLICT']
     },
     {
       name: 'Configurações',
@@ -141,16 +66,6 @@ const Sidebar: React.ForwardRefRenderFunction<SidebarHandles, Props> = (
           name: 'Permissões',
           subpage: '/permissions',
           need: ['LIST_PERMISSION']
-        },
-        {
-          name: 'Leitores',
-          subpage: '/readers',
-          need: ['LIST_READER']
-        },
-        {
-          name: 'Tipos de Leitor',
-          subpage: '/types',
-          need: ['LIST_READER']
         }
       ]
     }
@@ -192,7 +107,7 @@ const Sidebar: React.ForwardRefRenderFunction<SidebarHandles, Props> = (
     <Container className={className}>
       <LogoArea>
         <a href="/">
-          <img src={logo} alt="Teiú Intranet" />
+          <img src={logo} alt="Tia Sônia Intranet" />
         </a>
       </LogoArea>
       <Nav>
@@ -233,6 +148,4 @@ const Sidebar: React.ForwardRefRenderFunction<SidebarHandles, Props> = (
       </Nav>
     </Container>
   )
-}
-
-export default forwardRef(Sidebar)
+})

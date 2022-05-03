@@ -2,8 +2,10 @@ import React from 'react'
 
 import { Container } from './styles'
 
-const Header: React.FC = ({ children }) => {
-  return <Container>{children}</Container>
+interface Props {
+  children?: React.ReactNode
 }
 
-export default Header
+export const Header: React.FC<Props> = ({ children }) => {
+  return <Container>{children}</Container>
+}

@@ -2,13 +2,11 @@ import React, { useMemo } from 'react'
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
 import SimpleBar from 'simplebar-react'
 
-import {
-  PaginatedRequest,
-  OptionType
-} from '../../services/usePaginatedRequest'
-import theme from '../../styles/theme'
-import Button from '../Button'
-import Spinner from '../Spinner'
+import { PaginatedRequest, OptionType } from '../../services'
+import { theme } from '../../styles'
+
+import { Button, Spinner } from '..'
+
 import {
   DataTable,
   NoDataContainer,
@@ -21,12 +19,17 @@ import 'simplebar/dist/simplebar.min.css'
 
 interface Props {
   request: PaginatedRequest<any, unknown>
+  dataAlt?: Array<any>
   children: React.ReactNode
 }
 
-const PaginatedTable: React.FC<Props> = ({ request, children }) => {
+export const PaginatedTable: React.FC<Props> = ({
+  request,
+  children,
+  dataAlt
+}) => {
   const {
-    data,
+    data: dataRequest,
     error,
     page,
     perPage,
@@ -43,9 +46,10 @@ const PaginatedTable: React.FC<Props> = ({ request, children }) => {
     response
   ])
 
-  const numberOfPages = useMemo(() => response?.headers['x-total-page'], [
-    response
-  ])
+  const numberOfPages = useMemo(
+    () => Number(response?.headers['x-total-page']),
+    [response]
+  )
 
   const pages = useMemo(() => {
     const pages = []
@@ -56,7 +60,7 @@ const PaginatedTable: React.FC<Props> = ({ request, children }) => {
       if (
         (index > lower && index < upper) ||
         index === 1 ||
-        index === Number(numberOfPages)
+        index === numberOfPages
       ) {
         pages.push({
           value:
@@ -77,6 +81,8 @@ const PaginatedTable: React.FC<Props> = ({ request, children }) => {
     return pages
   }, [page, numberOfPages])
 
+  const data = dataAlt || dataRequest
+
   return (
     <>
       <SimpleBar>
@@ -87,7 +93,7 @@ const PaginatedTable: React.FC<Props> = ({ request, children }) => {
           {data?.length === 0 ? (
             <span>Não há registros a serem exibidos</span>
           ) : error ? (
-            <span>{error}</span>
+            <span>{String(error)}</span>
           ) : (
             <Spinner size={50} color={theme.colors.primary} />
           )}
@@ -109,39 +115,43 @@ const PaginatedTable: React.FC<Props> = ({ request, children }) => {
         </p>
 
         <nav>
-          <Button
-            size="small"
-            disabled={!hasPreviousPage}
-            onClick={loadPrevious}
-            color="medium-outline"
-            style={{ padding: 2 }}
-          >
-            <BiChevronLeft size={24} style={{ margin: 0 }} />
-          </Button>
-          <PaginateList className="hide-lg-down">
-            {pages.map(({ value, label }) => (
-              <a
-                key={value}
-                className={value === page ? 'active' : ''}
-                onClick={() => goToPage(value)}
+          {pages.length > 0 && (
+            <>
+              <Button
+                size="small"
+                disabled={!hasPreviousPage}
+                onClick={loadPrevious}
+                color="medium-outline"
+                style={{ padding: 2 }}
               >
-                {label}
-              </a>
-            ))}
-          </PaginateList>
-          <Button
-            size="small"
-            disabled={!hasNextPage}
-            onClick={loadNext}
-            color="medium-outline"
-            style={{ padding: 2 }}
-          >
-            <BiChevronRight size={24} style={{ margin: 0 }} />
-          </Button>
+                <BiChevronLeft size={24} style={{ margin: 0 }} />
+              </Button>
+              <PaginateList className="hide-lg-down">
+                {pages.map(({ value, label }) => (
+                  <a
+                    key={value}
+                    className={value === page ? 'active' : ''}
+                    onClick={() => goToPage(value)}
+                  >
+                    {label}
+                  </a>
+                ))}
+              </PaginateList>
+              <Button
+                size="small"
+                disabled={!hasNextPage}
+                onClick={loadNext}
+                color="medium-outline"
+                style={{ padding: 2 }}
+              >
+                <BiChevronRight size={24} style={{ margin: 0 }} />
+              </Button>
+            </>
+          )}
           <SelectPerPage
             classNamePrefix="react-select"
             name="per_page"
-            onChange={(value: OptionType) => {
+            onChange={(value: any) => {
               handlePerPage(value)
             }}
             placeholder=""
@@ -160,5 +170,3 @@ const PaginatedTable: React.FC<Props> = ({ request, children }) => {
     </>
   )
 }
-
-export default PaginatedTable

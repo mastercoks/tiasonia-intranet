@@ -1,7 +1,7 @@
 import { shade, tint } from 'polished'
 import styled, { css } from 'styled-components'
 
-import Tooltip from '../../Tooltip'
+import { Tooltip } from '../../Tooltip'
 
 interface InputContainerProps {
   isFocused: boolean

@@ -3,17 +3,25 @@ import { Form } from '@unform/web'
 import React, { useCallback, useRef, useState } from 'react'
 import { BiEditAlt, BiFilterAlt, BiPlus } from 'react-icons/bi'
 
-import Box from '../../../components/Box'
-import Button from '../../../components/Button'
-import Filters, { FilterHandles } from '../../../components/Filters'
-import { Input } from '../../../components/Form'
-import Header from '../../../components/Header'
-import Modal from '../../../components/Modal'
-import PaginatedTable from '../../../components/PaginatedTable'
-import usePaginatedRequest from '../../../services/usePaginatedRequest'
-import capitalize from '../../../utils/capitalize'
-import RoleForm from '../RoleForm'
+import {
+  Box,
+  Button,
+  Filters,
+  FilterHandles,
+  Input,
+  Header,
+  Modal,
+  PaginatedTable
+} from '../../../components'
+import { usePaginatedRequest } from '../../../services'
+import { capitalize } from '../../../utils'
+import { RoleForm } from '../RoleForm'
 import { Container, ScrollArea, Buttons } from './styles'
+
+interface IFilters {
+  name?: string
+  description?: string
+}
 
 interface Role {
   id: string
@@ -21,10 +29,10 @@ interface Role {
   description: string
 }
 
-const RoleList: React.FC = () => {
+export const RoleList: React.FC = () => {
   const [openModal, setOpenModal] = useState(false)
-  const [filters, setFilters] = useState(null)
-  const [roleId, setRoleId] = useState(null)
+  const [filters, setFilters] = useState<IFilters>({})
+  const [roleId, setRoleId] = useState('')
   const filterRef = useRef<FilterHandles>(null)
   const formRef = useRef<FormHandles>(null)
 
@@ -37,10 +45,10 @@ const RoleList: React.FC = () => {
     formRef.current?.setErrors({})
     formRef.current?.reset()
     setOpenModal(false)
-    request.revalidate()
+    request.mutate()
   }, [request])
 
-  const handleOpenModal = useCallback((id = undefined) => {
+  const handleOpenModal = useCallback((id = '') => {
     setRoleId(id)
     setOpenModal(true)
   }, [])
@@ -54,7 +62,7 @@ const RoleList: React.FC = () => {
     formRef.current?.reset()
   }, [])
 
-  const handleFilter = useCallback(data => {
+  const handleFilter = useCallback((data: IFilters) => {
     filterRef.current?.toggleModal(false)
     !data.name && delete data.name
     !data.description && delete data.description
@@ -130,5 +138,3 @@ const RoleList: React.FC = () => {
     </Container>
   )
 }
-
-export default RoleList

@@ -1,21 +1,21 @@
 import axios from 'axios'
 
-import { REACT_APP_API_URL } from '../utils/environment'
-import getErrorMessage from '../utils/getErrorMessage'
+import { API_URL, getErrorMessage } from '../utils'
 
 const api = axios.create({
-  baseURL: REACT_APP_API_URL
+  baseURL: API_URL
 })
 
 api.interceptors.request.use(config => {
-  let token = localStorage.getItem('@IntranetTeiu:token')
+  let token = String(localStorage.getItem('@Intranet:token'))
 
   if (config?.headers?.token) {
-    token = config.headers.token
+    token = String(config.headers.token)
     delete config.headers.token
   }
-
-  config.headers.authorization = `Bearer ${token}`
+  if (config.headers) {
+    config.headers.authorization = `Bearer ${token}`
+  }
 
   return config
 })
@@ -34,4 +34,4 @@ api.interceptors.response.use(
   }
 )
 
-export default api
+export { api }

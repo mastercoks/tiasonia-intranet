@@ -19,32 +19,29 @@ interface Props {
   children: ReactNode
 }
 
-const Dropdown: React.ForwardRefRenderFunction<DropdownHandles, Props> = (
-  { space, children },
-  ref
-) => {
-  const refMenu = useRef(null)
-  const [showMenu, setShowMenu] = useState(false)
-  useOnClickOutside(refMenu, () => setShowMenu(false))
+export const Dropdown = forwardRef<DropdownHandles, Props>(
+  ({ space, children }, ref) => {
+    const refMenu = useRef(null)
+    const [showMenu, setShowMenu] = useState(false)
+    useOnClickOutside(refMenu, () => setShowMenu(false))
 
-  const handleShowMenu = useCallback(() => {
-    const newState = !showMenu
-    setShowMenu(newState)
-  }, [showMenu])
+    const handleShowMenu = useCallback(() => {
+      const newState = !showMenu
+      setShowMenu(newState)
+    }, [showMenu])
 
-  useImperativeHandle(ref, () => {
-    return {
-      handleShowMenu
-    }
-  })
+    useImperativeHandle(ref, () => {
+      return {
+        handleShowMenu
+      }
+    })
 
-  if (!showMenu) return null
+    if (!showMenu) return null
 
-  return (
-    <Container ref={refMenu} space={space}>
-      {children}
-    </Container>
-  )
-}
-
-export default forwardRef(Dropdown)
+    return (
+      <Container ref={refMenu} space={space}>
+        {children}
+      </Container>
+    )
+  }
+)

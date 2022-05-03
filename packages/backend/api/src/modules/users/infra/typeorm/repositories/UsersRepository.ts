@@ -19,31 +19,8 @@ class UsersRepository implements IUsersRepository {
   }: ISearchUserDTO): Promise<IResponse> {
     const response = await this.ormRepository
       .createQueryBuilder('users')
-      .innerJoinAndSelect('users.cost_center', 'cost_center')
       .where('users.name like :name', { name: `%${search.name}%` })
-      .andWhere('users.cpf like :cpf', { cpf: `%${search.cpf}%` })
-      .andWhere('users.type like :type', { type: `%${search.type}%` })
-      .andWhere('users.company like :company', {
-        company: `%${search.company}%`
-      })
-      .andWhere('users.cost_center like :cost_center', {
-        cost_center: search.cost_center || '%%'
-      })
-      .andWhere(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select()
-          .from('cards', 'cards')
-          .where(`users.id = cards.user_id`)
-          .andWhere(`cards.number = :number_card`, {
-            number_card: `${search.number_card}`
-          })
-          .andWhere('cards.active = :active', {
-            active: true
-          })
-          .getQuery()
-        return (search.number_card ? 'EXISTS ' : 'NOT EXISTS') + subQuery
-      })
+      .andWhere('users.login like :login', { login: `%${search.login}%` })
       .orderBy('users.name', 'ASC')
       .skip(per_page * (page - 1))
       .take(per_page)
@@ -58,36 +35,15 @@ class UsersRepository implements IUsersRepository {
 
   public async findById(id: string): Promise<User | undefined> {
     return await this.ormRepository.findOne(id, {
-      relations: ['cost_center', 'roles', 'contact']
+      relations: ['roles']
     })
   }
 
-  public async getCardsById(id: string): Promise<User | undefined> {
-    return await this.ormRepository.findOne(id, {
-      relations: ['cards']
-    })
-  }
-
-  public async findByCpf(cpf: string): Promise<User | undefined> {
+  public async findByLogin(login: string): Promise<User | undefined> {
     return await this.ormRepository.findOne({
-      where: { cpf: Equal(cpf) },
-      relations: ['roles', 'contact']
+      where: { login: Equal(login) },
+      relations: ['roles']
     })
-  }
-
-  public async findCards(id: string): Promise<User | undefined> {
-    return await this.ormRepository.findOne(id, {
-      relations: ['cards', 'cards.user']
-    })
-  }
-
-  public async findCompanies(company: string): Promise<User[]> {
-    return await this.ormRepository
-      .createQueryBuilder('users')
-      .select('DISTINCT(`users`.`company`)')
-      .where('users.company like :company', { company: `%${company}%` })
-      .orderBy('users.company', 'ASC')
-      .getRawMany()
   }
 
   public async create(data: ICreateUserDTO): Promise<User> {

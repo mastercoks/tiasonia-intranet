@@ -1,13 +1,14 @@
-import Card from '../Card'
+import { Card } from '../Card'
 import { Container, CloseArea, ModalContainer } from './styles'
 
-interface ModalProps {
+interface Props {
   open: boolean
   onClose: () => void
   size?: 'sm' | 'md'
+  children?: React.ReactNode
 }
 
-const Modal: React.FC<ModalProps> = ({
+export const Modal: React.FC<Props> = ({
   open,
   onClose,
   children,
@@ -23,5 +24,3 @@ const Modal: React.FC<ModalProps> = ({
     </Container>
   )
 }
-
-export default Modal

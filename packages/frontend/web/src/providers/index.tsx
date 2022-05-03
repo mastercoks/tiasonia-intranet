@@ -1,12 +1,16 @@
 import React from 'react'
 import { ThemeProvider } from 'styled-components'
 
-import theme from '../styles/theme'
+import { theme } from '../styles'
 import { AuthProvider } from './auth'
 import { LoadingProvider } from './loading'
 import { ToastProvider } from './toast'
 
-const AppProvider: React.FC = ({ children }) => (
+interface Props {
+  children?: React.ReactNode
+}
+
+export const AppProvider: React.FC<Props> = ({ children }) => (
   <LoadingProvider>
     <ThemeProvider theme={theme}>
       <AuthProvider>
@@ -16,4 +20,7 @@ const AppProvider: React.FC = ({ children }) => (
   </LoadingProvider>
 )
 
-export default AppProvider
+export * from './auth'
+export * from './hooks'
+export * from './loading'
+export * from './toast'

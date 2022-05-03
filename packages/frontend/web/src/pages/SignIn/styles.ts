@@ -1,7 +1,7 @@
 import { tint } from 'polished'
 import styled from 'styled-components'
 
-import { Form } from '../../components/Form'
+import { Form } from '../../components'
 
 export const Container = styled.div`
   justify-content: center;
@@ -27,13 +27,13 @@ export const LogoContent = styled.div`
   align-items: center;
   div {
     display: flex;
-    flex-direction: row;
     justify-content: center;
-    align-items: center;
     margin: 20px 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
     h1 {
       font: 600 30px Poppins, sans-serif;
-      margin-left: 20px;
     }
     img {
       width: 70px;
@@ -48,10 +48,10 @@ export const LogoContent = styled.div`
     margin-bottom: 24px;
     div {
       h1 {
-        font-size: 36px;
+        font-size: 40px;
       }
       img {
-        width: auto;
+        width: 240px;
       }
     }
     h2 {

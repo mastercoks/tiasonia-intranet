@@ -26,7 +26,8 @@ interface Props<Multiline = false> {
 type InputProps = JSX.IntrinsicElements['input'] & Props<false>
 type TextAreaProps = JSX.IntrinsicElements['textarea'] & Props<true>
 type InputMaskProps = MaskProps & Props<false>
-const Input: React.FC<InputMaskProps | InputProps | TextAreaProps> = ({
+
+export const Input: React.FC<InputMaskProps | InputProps | TextAreaProps> = ({
   label,
   note,
   name,
@@ -206,5 +207,3 @@ const Input: React.FC<InputMaskProps | InputProps | TextAreaProps> = ({
     </Container>
   )
 }
-
-export default Input

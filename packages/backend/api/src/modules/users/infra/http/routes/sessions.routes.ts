@@ -10,8 +10,8 @@ sessionsRouter.post(
   '/',
   celebrate({
     [Segments.BODY]: {
-      login: Joi.string().min(11).max(11).required(),
-      password: Joi.string().required().uppercase()
+      login: Joi.string().required(),
+      password: Joi.string().required()
     }
   }),
   sessionsController.create

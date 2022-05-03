@@ -2,18 +2,20 @@ import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
 import React, { useCallback, useRef, useState } from 'react'
 import { BiEditAlt, BiFilterAlt, BiPlus } from 'react-icons/bi'
-import { RouteComponentProps } from 'react-router-dom'
 
-import Box from '../../../components/Box'
-import Button from '../../../components/Button'
-import Filters, { FilterHandles } from '../../../components/Filters'
-import { Input } from '../../../components/Form'
-import Header from '../../../components/Header'
-import Modal from '../../../components/Modal'
-import PaginatedTable from '../../../components/PaginatedTable'
-import usePaginatedRequest from '../../../services/usePaginatedRequest'
-import capitalize from '../../../utils/capitalize'
-import PermissionForm from '../PermissionForm'
+import {
+  Box,
+  Button,
+  Filters,
+  FilterHandles,
+  Input,
+  Header,
+  Modal,
+  PaginatedTable
+} from '../../../components'
+import { usePaginatedRequest } from '../../../services'
+import { capitalize } from '../../../utils'
+import { PermissionForm } from '../PermissionForm'
 import { Container, ScrollArea, Buttons } from './styles'
 
 interface Permission {
@@ -22,12 +24,17 @@ interface Permission {
   description: string
 }
 
-const PermissionList: React.FC<RouteComponentProps> = ({ history }) => {
+interface IFilters {
+  name?: string
+  description?: string
+}
+
+export const PermissionList: React.FC = () => {
   const [openModal, setOpenModal] = useState(false)
   const filterRef = useRef<FilterHandles>(null)
-  const [permissionId, setPermissionId] = useState(null)
+  const [permissionId, setPermissionId] = useState('')
   const formRef = useRef<FormHandles>(null)
-  const [filters, setFilters] = useState(null)
+  const [filters, setFilters] = useState<IFilters>({})
 
   const request = usePaginatedRequest<Permission[]>({
     url: `/permissions`,
@@ -37,10 +44,10 @@ const PermissionList: React.FC<RouteComponentProps> = ({ history }) => {
     formRef.current?.setErrors({})
     formRef.current?.reset()
     setOpenModal(false)
-    request.revalidate()
+    request.mutate()
   }, [request])
 
-  const handleOpenModal = useCallback((id = undefined) => {
+  const handleOpenModal = useCallback((id = '') => {
     setPermissionId(id)
     setOpenModal(true)
   }, [])
@@ -54,7 +61,7 @@ const PermissionList: React.FC<RouteComponentProps> = ({ history }) => {
     formRef.current?.reset()
   }, [])
 
-  const handleFilter = useCallback(data => {
+  const handleFilter = useCallback((data: IFilters) => {
     filterRef.current?.toggleModal(false)
     !data.name && delete data.name
     !data.description && delete data.description
@@ -134,5 +141,3 @@ const PermissionList: React.FC<RouteComponentProps> = ({ history }) => {
     </Container>
   )
 }
-
-export default PermissionList
