@@ -1,5 +1,10 @@
-#!/usr/bin/env bashnknlknlk
+#!/usr/bin/env bash
 DOMAIN=${DOMAIN-localhost}
+
+echo "load environment variables from .env file in bash"
+set -a
+source .env
+set +a
 
 echo "building intranet"
 docker-compose -f intranet.yml build
