@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   web:
-    image: registry.${DOMAIN}/intranet-web
+    image: 127.0.0.1:5000/intranet-web
     command: yarn workspace @intranet/web prod
     build:
       context: .
@@ -27,7 +27,7 @@ services:
       - public
 
   api:
-    image: registry.${DOMAIN}/intranet-api
+    image: 127.0.0.1:5000/intranet-api
     env_file:
       - .env
     build:
