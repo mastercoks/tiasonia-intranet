@@ -78,6 +78,8 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      labels:
+        - traefik.http.services.db.loadbalancer.server.port=${MYSQL_PORT:-3306}
 
   db-gui:
     image: phpmyadmin/phpmyadmin:5.1.3
