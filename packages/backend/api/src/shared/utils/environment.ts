@@ -27,4 +27,5 @@ export const { MSSQL_HOST } = process.env
 export const { MSSQL_USER } = process.env
 export const { MSSQL_PASS } = process.env
 export const { MSSQL_DB } = process.env
+export const { MSSQL_PORT } = process.env
 export const { MSSQL_DEBUG } = process.env

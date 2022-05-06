@@ -5,6 +5,7 @@ const db = knex({
   client: 'mssql',
   connection: {
     host: mssqlConfig.host,
+    port: mssqlConfig.port,
     user: mssqlConfig.user,
     password: mssqlConfig.password,
     database: mssqlConfig.database,
