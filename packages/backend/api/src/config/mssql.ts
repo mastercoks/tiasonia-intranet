@@ -2,7 +2,7 @@ import {
   MSSQL_DB,
   MSSQL_DEBUG,
   MSSQL_HOST,
-  MSSQ_PORT,
+  MSSQL_PORT,
   MSSQL_PASS,
   MSSQL_USER
 } from '@shared/utils/environment'
@@ -18,7 +18,7 @@ interface MssqlConfig {
 
 export default {
   host: MSSQL_HOST,
-  port: Number(MSSQ_PORT),
+  port: Number(MSSQL_PORT),
   user: MSSQL_USER,
   password: MSSQL_PASS,
   database: MSSQL_DB,
