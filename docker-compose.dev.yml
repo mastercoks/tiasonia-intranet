@@ -9,8 +9,6 @@ services:
     command: yarn workspace @intranet/web dev
     volumes:
       - ./packages/frontend/web:/usr/src/app/packages/frontend/web
-    ports:
-      - '${WEB_PORT}:${WEB_PORT}'
 
   api:
     command: yarn workspace @intranet/api dev
@@ -18,3 +16,8 @@ services:
       - ./packages/backend/api:/usr/src/app/packages/backend/api
     ports:
       - '${DEBUG_PORT}:9229'
+
+  puppeteer:
+    command: yarn workspace @intranet/puppeteer dev
+    volumes:
+      - ./packages/backend/puppeteer:/usr/src/app/packages/backend/puppeteer

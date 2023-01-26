@@ -1,0 +1,9 @@
+FROM ghcr.io/puppeteer/puppeteer:19.4.1
+
+COPY --chown=pptruser package.json yarn.lock prettier.config.js tsconfig.json .eslintrc.js .eslintignore .env ./
+COPY --chown=pptruser packages/shared ./packages/shared
+COPY --chown=pptruser packages/backend/puppeteer/package.json ./packages/backend/puppeteer/
+
+RUN yarn && yarn cache clean
+
+COPY --chown=pptruser packages/backend/puppeteer/ ./packages/backend/puppeteer/

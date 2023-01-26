@@ -40,7 +40,7 @@ export const Select: React.FC<Props> = ({ name, label, note, ...rest }) => {
             (option: OptionTypeBase) => option.value
           )
         }
-        if (!ref.state.selectValue) {
+        if (!ref.state.selectValue || ref.state.selectValue.length === 0) {
           return ''
         }
         return ref.state.selectValue[0].value

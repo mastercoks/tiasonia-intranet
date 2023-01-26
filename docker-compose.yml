@@ -7,6 +7,8 @@ services:
       context: .
       dockerfile: ./Dockerfile.web
     hostname: web
+    ports:
+      - '${WEB_PORT}:${WEB_PORT}'
     env_file:
       - .env
     networks:
@@ -23,11 +25,25 @@ services:
       - ${API_PORT}:${API_PORT}
     links:
       - db
+      - puppeteer
     depends_on:
       - db
+      - puppeteer
     networks:
       - backend
       - frontend
+
+  puppeteer:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.puppeteer
+    hostname: puppeteer
+    env_file:
+      - .env
+    ports:
+      - ${PUPPETEER_PORT}:${PUPPETEER_PORT}
+    networks:
+      - backend
 
   fix-db-permissions:
     image: bitnami/mariadb:latest

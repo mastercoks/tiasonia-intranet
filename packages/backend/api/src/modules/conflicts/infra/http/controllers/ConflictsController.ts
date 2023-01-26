@@ -24,8 +24,9 @@ class ConflictsController {
   }
 
   public async create(req: Request, res: Response): Promise<Response> {
+    const { uf } = req.body
     const checkConflictService = container.resolve(CheckConflictService)
-    checkConflictService.execute()
+    checkConflictService.execute(uf)
     return res.status(204).send()
   }
 

@@ -2,16 +2,19 @@ import uploadConfig from '@config/upload'
 import ILoggerProvider from '@shared/adapters/models/ILoggerProvider'
 import db from '@shared/infra/knex'
 import getCustomers from '@shared/infra/knex/queries/getCustomers'
-import axios from 'axios'
+import { PUPPETEER_HOST, PUPPETEER_PORT } from '@shared/utils/environment'
 import { Workbook } from 'exceljs'
-import { JSDOM } from 'jsdom'
 import path from 'path'
-import { stringify } from 'qs'
 import { inject, injectable } from 'tsyringe'
 
+import ICheckSimpleDTO from '../dtos/ICheckSimpleDTO'
+import IConflictProtheusDTO from '../dtos/IConflictProtheusDTO'
 import Conflict from '../infra/typeorm/entities/Conflict'
+import { UFs } from '../infra/typeorm/entities/ConflictExecution'
 import IConflictExecutionsRepository from '../repositories/IConflictExecutionsRepository'
 import IConflictsRepository from '../repositories/IConflictsRepository'
+import { api } from '../utils/api'
+import { formatCNPJ } from '../utils/formatters'
 
 @injectable()
 class CheckConflictService {
@@ -24,49 +27,41 @@ class CheckConflictService {
     private loggerProvider: ILoggerProvider
   ) {}
 
-  public async execute(): Promise<void> {
-    const execution = await this.conflictExecutionsRepository.create()
+  public async execute(uf: UFs): Promise<void> {
+    const execution = await this.conflictExecutionsRepository.create(uf)
     try {
-      const rows = []
+      const conflicts: string[][] = []
+      const requests: string[][] = []
+      const errors: string[][] = []
       let i = 1
-      const customers = await db.raw<Conflict[]>(getCustomers)
+      const customers = await db.raw<IConflictProtheusDTO[]>(getCustomers(uf))
+
       for (const customer of customers) {
-        customer.simple_national = !!customer.simple_national
-        customer.execution = execution
         try {
+          const url = `http://${PUPPETEER_HOST}:${PUPPETEER_PORT}/simple/${customer.cnpj}`
           this.loggerProvider.log(
             'info',
             `Processando: ${i++} de ${customers.length}\nCNPJ: ${
               customer.cnpj
             }`,
             {
-              action: '@modules/conflicts/services/CheckConflictService'
+              action: '@modules/conflicts/services/CheckConflictService',
+              url
             }
           )
-
-          const { data } = await axios.post(
-            'http://www.sefaz.ba.gov.br/Sintegra/Result.asp',
-            stringify({
-              txt_CNPJ: customer.cnpj
-            }),
-            {
-              headers: {
-                'content-type':
-                  'application/x-www-form-urlencoded;charset=utf-8'
-              }
-            }
-          )
-          const doc = new JSDOM(data)
-          let status_sefaz = false
-          const array = doc.window.document.querySelectorAll('font')
-          array.forEach((element: any) => {
-            if (element.innerHTML.includes('SIMPLES NACIONAL')) {
-              status_sefaz = true
-            }
-          })
+          const { data } = await api.get<ICheckSimpleDTO>(url)
+          const { cnpj, isSimple, name, simei, simple } = data
+          requests.push([
+            formatCNPJ(customer.cnpj),
+            name,
+            cnpj?.trim(),
+            simple,
+            simei,
+            isSimple ? 'Sim' : 'Não'
+          ])
           if (
-            (status_sefaz && !customer.simple_national) ||
-            (!status_sefaz && customer.simple_national)
+            (isSimple && !customer.protheus) ||
+            (!isSimple && !!customer.protheus)
           ) {
             const {
               code,
@@ -76,32 +71,44 @@ class CheckConflictService {
               name_salesman,
               code_coordinator,
               name_coordinator,
+              protheus,
               simple_national
-            } = await this.conflictsRepository.create(customer)
-            rows.push([
+            } = await this.conflictsRepository.create({
+              cnpj: customer.cnpj,
+              code: customer.code,
+              name: customer.name,
+              code_coordinator: customer.code_coordinator,
+              name_coordinator: customer.name_coordinator,
+              code_salesman: customer.code_salesman,
+              name_salesman: customer.name_salesman,
+              protheus: !!customer.protheus,
+              simple_national: isSimple,
+              execution
+            })
+            conflicts.push([
               code,
               name,
-              cnpj,
+              formatCNPJ(cnpj),
               code_salesman,
               name_salesman,
               code_coordinator,
               name_coordinator,
-              simple_national ? 'Não' : 'Sim',
+              protheus ? 'Sim' : 'Não',
+              simple_national ? 'Sim' : 'Não',
               ''
             ])
           }
-        } catch (err: any) {
+        } catch (message) {
           this.loggerProvider.log('error', customer.cnpj, {
             action: '@modules/conflicts/services/CheckConflictService',
-            err,
-            message: err.message,
-            stack: err.stack?.split('\n')
+            message
           })
+          errors.push([formatCNPJ(customer.cnpj), String(message)])
         }
       }
 
       const workbook = new Workbook()
-      const worksheet = workbook.addWorksheet('Conflitos de cadastro')
+      let worksheet = workbook.addWorksheet('Conflitos de cadastro')
       worksheet.addTable({
         name: 'Conflitos de cadastro',
         ref: 'A1',
@@ -112,17 +119,50 @@ class CheckConflictService {
         columns: [
           { name: 'Código-Loja', filterButton: true },
           { name: 'Nome', filterButton: true },
-          { name: 'CNJP', filterButton: true },
+          { name: 'CNPJ', filterButton: true },
           { name: 'Código Vendedor', filterButton: true },
           { name: 'Nome Vendedor', filterButton: true },
           { name: 'Código Coordenador', filterButton: true },
           { name: 'Nome Coordenador', filterButton: true },
+          { name: 'Protheus', filterButton: true },
           { name: 'Simples Nacional', filterButton: true },
           { name: 'Obs.:', filterButton: true }
         ],
-        rows
+        rows: conflicts
       })
-      const tmpName = `conflict_${new Date().getTime()}.xlsx`
+      worksheet = workbook.addWorksheet('Requisições')
+      worksheet.addTable({
+        name: 'Requisições',
+        ref: 'A1',
+        style: {
+          theme: 'TableStyleMedium2',
+          showRowStripes: true
+        },
+        columns: [
+          { name: 'CNPJ Consulta', filterButton: true },
+          { name: 'Nome', filterButton: true },
+          { name: 'CNPJ Matriz ', filterButton: true },
+          { name: 'Simples Nacional', filterButton: true },
+          { name: 'SIMEI', filterButton: true },
+          { name: 'Simples?', filterButton: true }
+        ],
+        rows: requests
+      })
+      worksheet = workbook.addWorksheet('Errors ao consultar')
+      worksheet.addTable({
+        name: 'Errors ao consultar',
+        ref: 'A1',
+        style: {
+          theme: 'TableStyleMedium2',
+          showRowStripes: true
+        },
+        columns: [
+          { name: 'CNPJ', filterButton: true },
+          { name: 'Erro', filterButton: true }
+        ],
+        rows: errors
+      })
+      const tmpName = `conflict_${uf}_${new Date().getTime()}.xlsx`
       await workbook.xlsx.writeFile(
         path.resolve(uploadConfig.tmpDir, 'spreadsheets', tmpName)
       )
@@ -130,12 +170,11 @@ class CheckConflictService {
       execution.running = false
       execution.url = `/spreadsheets/${tmpName}`
       await this.conflictExecutionsRepository.save(execution)
-    } catch (err: any) {
+    } catch (err) {
+      const { message } = err as Error
       this.loggerProvider.log('error', 'Erro na sincronização dos conflitos', {
         action: '@modules/conflicts/services/CheckConflictService',
-        err,
-        message: err.message,
-        stack: err.stack?.split('\n')
+        message
       })
       execution.running = false
       await this.conflictExecutionsRepository.save(execution)

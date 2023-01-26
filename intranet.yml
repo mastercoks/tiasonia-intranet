@@ -58,8 +58,31 @@ services:
         max-file: 5
     depends_on:
       - db
+      - puppeteer
     networks:
       - public
+      - backend
+
+  puppeteer:
+    image: 127.0.0.1:5000/intranet-puppeteer
+    hostname: ${PUPPETEER_HOST:-puppeteer}
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: ./Dockerfile.puppeteer
+    command: yarn workspace @intranet/puppeteer prod
+    deploy:
+      labels:
+        - traefik.http.services.intranet-puppeteer.loadbalancer.server.port=${PUPPETEER_PORT:-3333}
+      restart_policy:
+        condition: on-failure
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 5
+    networks:
       - backend
 
   db:

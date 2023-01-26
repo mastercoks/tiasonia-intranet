@@ -44,7 +44,7 @@ export const AsyncSelect: React.FC<Props> = ({
             (option: OptionTypeBase) => option.value
           )
         }
-        if (!ref.state.selectValue) {
+        if (!ref.state.selectValue || ref.state.selectValue.length === 0) {
           return ''
         }
 

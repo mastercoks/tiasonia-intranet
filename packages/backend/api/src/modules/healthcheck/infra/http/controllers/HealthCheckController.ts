@@ -9,8 +9,9 @@ class HealthCheckController {
     }
     try {
       return res.status(200).send(healthCheck)
-    } catch (err: any) {
-      healthCheck.message = err
+    } catch (err) {
+      const { message } = err as Error
+      healthCheck.message = message
       res.status(503).send(healthCheck)
     }
   }

@@ -21,10 +21,13 @@ class ListConflictService {
   ) {}
 
   public async execute({
+    execution_id,
     page,
     per_page = 10
   }: IListConflictDTO): Promise<Response> {
-    const execution = await this.conflictExecutionsRepository.findCurrent()
+    const execution = execution_id
+      ? await this.conflictExecutionsRepository.findById(execution_id)
+      : await this.conflictExecutionsRepository.findCurrent()
 
     if (!execution) {
       throw new AppError(

@@ -23,6 +23,10 @@ const permissions = [
     description: 'Interrompe a sincronização dos conflitos'
   },
   {
+    name: 'LIST_EXECUTIONS',
+    description: 'Lista as execuções de conflitos'
+  },
+  {
     name: 'LIST_CONFLICT',
     description: 'Lista os conflitos'
   },

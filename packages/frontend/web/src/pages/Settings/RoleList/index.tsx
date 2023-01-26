@@ -37,7 +37,7 @@ export const RoleList: React.FC = () => {
   const formRef = useRef<FormHandles>(null)
 
   const request = usePaginatedRequest<Role[]>({
-    url: `/roles`,
+    url: '/roles',
     params: filters
   })
 

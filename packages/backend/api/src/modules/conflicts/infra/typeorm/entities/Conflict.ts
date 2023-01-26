@@ -37,7 +37,10 @@ class Conflict {
   @Column('varchar')
   name_coordinator: string
 
-  @Column('varchar')
+  @Column('bool')
+  protheus: boolean
+
+  @Column('bool')
   simple_national: boolean
 
   @Exclude()

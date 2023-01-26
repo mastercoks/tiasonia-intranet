@@ -2,7 +2,7 @@ import React from 'react'
 import { Routes as RoutesDom, Route, Navigate } from 'react-router-dom'
 
 import {
-  Conflicts,
+  ConflictList,
   Dashboard,
   SignIn,
   PermissionList,
@@ -44,7 +44,7 @@ export const Routes: React.FC = () => {
           path="/conflicts"
           element={
             <RouteWrapper isPrivate need={['LIST_CONFLICT']}>
-              <Conflicts />
+              <ConflictList />
             </RouteWrapper>
           }
         />

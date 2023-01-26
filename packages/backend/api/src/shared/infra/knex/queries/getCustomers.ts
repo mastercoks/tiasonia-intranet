@@ -1,4 +1,6 @@
-const getCustomers = `
+import { UFs } from '@modules/conflicts/infra/typeorm/entities/ConflictExecution'
+
+const getCustomers = (uf: UFs): string => `
 SELECT
 	LTRIM(RTRIM(A1_COD))+'-'+LTRIM(RTRIM(A1_LOJA)) code,
 	LTRIM(RTRIM(LOWER(A1_NOME))) name,
@@ -10,12 +12,12 @@ SELECT
 	CASE A1_GRPTRIB
 		WHEN '001' THEN 1
 		ELSE 0
-	END simple_national
+	END protheus
 FROM
 	SA1010 A,
 	SA3010 B,
 	SA3010 C
-WHERE 
+WHERE
 	A.D_E_L_E_T_ = ''
 	AND B.D_E_L_E_T_ = ''
 	AND C.D_E_L_E_T_ = ''
@@ -23,10 +25,10 @@ WHERE
 	AND B.A3_SUPER = C.A3_COD
 	AND A1_MSBLQL = 2
 	AND A1_INSCR <> ''
-	AND A1_EST = 'BA'
+	AND A1_EST = '${uf}'
 	AND A1_INSCR <> 'ISENTO'
 	AND A1_PESSOA = 'J'
-ORDER BY 
+ORDER BY
 	name`
 
 export default getCustomers

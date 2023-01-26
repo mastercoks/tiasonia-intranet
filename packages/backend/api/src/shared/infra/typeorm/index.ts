@@ -21,15 +21,23 @@ const connect = async () => {
       synchronize: mysqlConfig.synchronize,
       logging: mysqlConfig.logging
     })
-    console.log('Connected!')
-  } catch (err: any) {
-    console.error('error', 'Erro na sincronização dos conflitos', {
-      action: '@shared/infra/typeorm/index',
-      err,
-      message: err.message,
-      stack: err.stack?.split('\n')
+
+    console.log('info', 'Database connected', {
+      action: '@shared/infra/typeorm/index'
     })
-    await sleep(2000)
+  } catch (err) {
+    const { message } = err as Error
+    console.log(
+      'error',
+      'Error when trying to connect to the database, trying again in 1s',
+      {
+        action: '@shared/infra/typeorm/index',
+        message,
+        mysqlConfig,
+        err
+      }
+    )
+    await sleep(1000)
     connect()
   }
 }

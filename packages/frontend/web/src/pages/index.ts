@@ -1,5 +1,5 @@
 export * from './Dashboard'
-export * from './Conflicts'
+export { ConflictForm, ConflictList } from './Conflicts'
 export {
   PermissionForm,
   PermissionList,
