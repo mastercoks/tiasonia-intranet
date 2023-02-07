@@ -1,3 +1,4 @@
+import { isValidCNPJ } from '@modules/simple/utils'
 import { celebrate, Joi, Segments } from 'celebrate'
 import { Router } from 'express'
 
@@ -10,7 +11,12 @@ simpleRouter.get(
   '/:cnpj',
   celebrate({
     [Segments.PARAMS]: {
-      cnpj: Joi.number().required()
+      cnpj: Joi.string()
+        .custom((cnpj, helper) => {
+          if (isValidCNPJ(cnpj)) return cnpj
+          helper.message({ custom: 'CNPJ inválido' })
+        }, 'invalid-cnpj')
+        .required()
     }
   }),
   simpleController.index
